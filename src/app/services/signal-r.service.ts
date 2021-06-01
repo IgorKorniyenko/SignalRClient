@@ -33,6 +33,13 @@ export class SignalRService {
     });
   }
 
+  public addGroupMessageListener = () => {
+    this.hubConnection.on('groupmessage', (data) => {
+      window.alert(data);
+      console.log(data);
+    });
+  }
+
   public getConnectionId = () => {
     this.hubConnection.invoke('getconnectionid').then(
       (data) => {

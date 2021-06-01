@@ -30,8 +30,9 @@ export class AppComponent implements OnInit {
     this.signalRService.startConnection();
     this.signalRService.addTransferChartDataListener();   
     this.signalRService.addBroadcastChartDataListener();
+    this.signalRService.addGroupMessageListener();
     this.startHttpRequest();
-    this.grupoCall()
+    this.subscribeToGroup(10);
   }
   private startHttpRequest = () => {
     this.http.get('https://localhost:5001/api/chart')
@@ -40,11 +41,19 @@ export class AppComponent implements OnInit {
       })
   }
 
-  private grupoCall= () => {
-    this.http.get('https://localhost:5001/api/chart/rutanueva')
-      .subscribe(res => {
-        console.log(res);
-      })
+  private subscribeToGroup= (idGroup: Number) => {
+    if(this.signalRService.connectionId == undefined){
+      setTimeout(() => {
+        this.subscribeToGroup(idGroup);
+    }, 2000);
+      
+     
+    }else{
+        this.http.get('https://localhost:5001/api/chart/subscribe/' + idGroup + "/" + this.signalRService.connectionId)
+          .subscribe(res => {
+            console.log(res);
+          })
+    }
   }
 
   public chartClicked = (event) => {
